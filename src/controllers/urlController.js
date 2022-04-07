@@ -77,10 +77,18 @@ const createUrl = async function(req,res) {
             return res.status(400).send({status: false, msg:"Please provide longUrl"})
         }
 
+        let check = await GET_ASYNC(`${longUrl}`)
+        if (check) {
+            let response = JSON.parse(check)
+            console.log("data is from cache")
+            return res.status(200).send(response)
+        }
+
+
 
         //Validation of longUrl            
-        // if(!/(:?^((https|http|HTTP|HTTPS){1}:\/\/)(([w]{3})[\.]{1}|)?([a-zA-Z0-9]{1,}[\.])[\w]*((\/){1}([\w@?^=%&amp;~+#-_.]+))*)$/.test(longUrl)) {
-            if(!/(http|https|HTTP|HTTPS?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%.\+#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%\+.#?&//=]*)$/.test(longUrl)) {
+         if(!/(:?^((https|http|HTTP|HTTPS){1}:\/\/)(([w]{3})[\.]{1}|)?([a-zA-Z0-9]{1,}[\.])[\w]*((\/){1}([\w@?^=%&amp;~+#-_.]+))*)$/.test(longUrl)) {
+          //  if(!/(http|https|HTTP|HTTPS?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%.\+#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%\+.#?&//=]*)$/.test(longUrl)) {
             return res.status(400).send({status: false, message: `logoLink is not a valid URL`})
         }
     
@@ -89,6 +97,8 @@ const createUrl = async function(req,res) {
             
         let url = await UrlModel.findOne({longUrl: longUrl}).select({longUrl:1, shortUrl:1, urlCode:1, _id:0})
         if(url) {
+            await SET_ASYNC(`${longUrl}`, JSON.stringify(url))
+            console.log(" data is from mongodb")
             return res.status(200).send({status: true, data: url})
         } 
     
@@ -105,9 +115,9 @@ const createUrl = async function(req,res) {
         let shortUrl = baseUrl +  urlCode.toLowerCase()
 
 
-        let input = {longUrl, shortUrl, urlCode}
+       let input = {longUrl, shortUrl, urlCode}
         
-        const finalurl = await UrlModel.create(input)
+       const finalurl = await UrlModel.create(input)
         const createdUrl = {longUrl:finalurl.longUrl, shortUrl:finalurl.shortUrl, urlCode:finalurl.urlCode}
         
         return res.status(201).send({status: true, data: createdUrl})
