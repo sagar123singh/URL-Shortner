@@ -88,10 +88,13 @@ const createUrl = async function(req,res) {
 
         //Validation of longUrl            
          if(!/(:?^((https|http|HTTP|HTTPS){1}:\/\/)(([w]{3})[\.]{1}|)?([a-zA-Z0-9]{1,}[\.])[\w]*((\/){1}([\w@?^=%&amp;~+#-_.]+))*)$/.test(longUrl)) {
-          //  if(!/(http|https|HTTP|HTTPS?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%.\+#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%\+.#?&//=]*)$/.test(longUrl)) {
             return res.status(400).send({status: false, message: `logoLink is not a valid URL`})
         }
     
+    //     // Validation of longUrl
+    //     if( (!/(http|https|HTTP|HTTPS?:\/\/.)?(([www]{3})[\.]{1})?[-a-zA-Z0-9@:%.\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%\+.~#?&//=]*)$/.test(longUrl)) && (!/(:?^((https|http|HTTP|HTTPS){1}:\/\/)(([w]{3})[\.]{1}|)?([a-zA-Z0-9]{1,}[\.])[\w]*((\/){1}([\w@?^=%&amp;~+#-_.]+))*)$/.test(longUrl)) ) { //TA
+    //     return res.status(400).send({status: false, message: `logoLink is not a valid URL`})
+    // }
         
 
             
